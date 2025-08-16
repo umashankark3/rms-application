@@ -1,0 +1,297 @@
+/* Custom styles for RMS */
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #fafafa;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark theme styles */
+body.dark-theme {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+body.dark-theme .card {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+body.dark-theme .card .card-title {
+  color: #ffffff;
+}
+
+body.dark-theme .navbar-fixed nav {
+  background-color: #1e1e1e !important;
+}
+
+body.dark-theme .sidenav {
+  background-color: #1e1e1e;
+}
+
+body.dark-theme .sidenav li > a {
+  color: #ffffff;
+}
+
+body.dark-theme .sidenav .user-view {
+  background-color: #333333;
+}
+
+body.dark-theme .responsive-table {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+body.dark-theme .responsive-table th {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+body.dark-theme .responsive-table tbody tr {
+  border-bottom: 1px solid #333333;
+}
+
+body.dark-theme .responsive-table tbody tr:hover {
+  background-color: #333333;
+}
+
+body.dark-theme .input-field input[type=text]:focus,
+body.dark-theme .input-field input[type=email]:focus,
+body.dark-theme .input-field input[type=password]:focus,
+body.dark-theme .input-field input[type=number]:focus,
+body.dark-theme .input-field textarea:focus {
+  border-bottom: 1px solid #26a69a;
+  box-shadow: 0 1px 0 0 #26a69a;
+}
+
+body.dark-theme .input-field input[type=text],
+body.dark-theme .input-field input[type=email],
+body.dark-theme .input-field input[type=password],
+body.dark-theme .input-field input[type=number],
+body.dark-theme .input-field textarea {
+  color: #ffffff;
+  border-bottom: 1px solid #666666;
+}
+
+body.dark-theme .input-field label {
+  color: #999999;
+}
+
+body.dark-theme .input-field label.active {
+  color: #26a69a;
+}
+
+body.dark-theme .dropdown-content {
+  background-color: #1e1e1e;
+}
+
+body.dark-theme .dropdown-content li > a,
+body.dark-theme .dropdown-content li > span {
+  color: #ffffff;
+}
+
+body.dark-theme .dropdown-content li:hover {
+  background-color: #333333;
+}
+
+body.dark-theme .modal {
+  background-color: #1e1e1e;
+}
+
+body.dark-theme .modal .modal-content {
+  color: #ffffff;
+}
+
+body.dark-theme .file-drop-zone {
+  border-color: #666666;
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+body.dark-theme .file-drop-zone:hover,
+body.dark-theme .file-drop-zone.dragover {
+  border-color: #26a69a;
+  background-color: #2a2a2a;
+}
+
+body.dark-theme .pagination li.active {
+  background-color: #26a69a;
+}
+
+body.dark-theme select {
+  color: #ffffff;
+  background-color: #1e1e1e;
+  border: 1px solid #666666;
+}
+
+body.dark-theme .select-wrapper input.select-dropdown {
+  color: #ffffff;
+  border-bottom: 1px solid #666666;
+}
+
+body.dark-theme .select-wrapper .caret {
+  fill: #ffffff;
+}
+
+/* Light theme explicit styles */
+body.light-theme {
+  background-color: #fafafa;
+  color: #212121;
+}
+
+body.light-theme .card {
+  background-color: #ffffff;
+  color: #212121;
+}
+
+/* Override some Materialize defaults */
+.navbar-fixed {
+  z-index: 997;
+}
+
+.card {
+  border-radius: 8px;
+}
+
+.btn, .btn-large, .btn-small {
+  border-radius: 4px;
+}
+
+/* Custom utility classes */
+.mt-1 { margin-top: 1rem !important; }
+.mt-2 { margin-top: 2rem !important; }
+.mb-1 { margin-bottom: 1rem !important; }
+.mb-2 { margin-bottom: 2rem !important; }
+.ml-1 { margin-left: 1rem !important; }
+.mr-1 { margin-right: 1rem !important; }
+
+.pt-1 { padding-top: 1rem !important; }
+.pt-2 { padding-top: 2rem !important; }
+.pb-1 { padding-bottom: 1rem !important; }
+.pb-2 { padding-bottom: 2rem !important; }
+
+/* File upload styling */
+.file-drop-zone {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  transition: border-color 0.3s ease;
+  cursor: pointer;
+}
+
+.file-drop-zone:hover {
+  border-color: #26a69a;
+}
+
+.file-drop-zone.dragover {
+  border-color: #26a69a;
+  background-color: #f0f9ff;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-new { background-color: #e3f2fd; color: #1976d2; }
+.status-reviewing { background-color: #fff3e0; color: #f57c00; }
+.status-assigned { background-color: #f3e5f5; color: #7b1fa2; }
+.status-shortlisted { background-color: #e8f5e8; color: #388e3c; }
+.status-rejected { background-color: #ffebee; color: #d32f2f; }
+
+/* Skills chips */
+.skills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.skill-chip {
+  background-color: #e0f2f1;
+  color: #00695c;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Loading states */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Table improvements */
+.responsive-table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+.responsive-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* WhatsApp button styling */
+.whatsapp-btn {
+  background-color: #25d366 !important;
+  color: white !important;
+}
+
+.whatsapp-btn:hover {
+  background-color: #128c7e !important;
+}
+
+/* Error states */
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+  border-left: 4px solid #c62828;
+}
+
+.success-message {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+  border-left: 4px solid #2e7d32;
+}
+
+/* Mobile responsiveness */
+@media only screen and (max-width: 600px) {
+  .container {
+    width: 95%;
+  }
+  
+  .card {
+    margin: 0.5rem 0;
+  }
+  
+  .btn-small {
+    padding: 0 1rem;
+    font-size: 0.8rem;
+  }
+}

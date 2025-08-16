@@ -1,0 +1,120 @@
+const fs = require('fs').promises;
+const path = require('path');
+const crypto = require('crypto');
+const AWS = require('aws-sdk');
+
+class StorageService {
+  constructor() {
+    this.driver = process.env.STORAGE_DRIVER || 'local';
+    this.uploadDir = process.env.UPLOAD_DIR || 'uploads';
+    
+    if (this.driver === 's3') {
+      this.s3 = new AWS.S3({
+        accessKeyId: process.env.S3_ACCESS_KEY,
+        secretAccessKey: process.env.S3_SECRET_KEY,
+        region: process.env.S3_REGION
+      });
+      this.bucket = process.env.S3_BUCKET;
+    }
+  }
+
+  generateFileKey(originalName) {
+    const timestamp = Date.now();
+    const random = crypto.randomBytes(8).toString('hex');
+    const ext = path.extname(originalName);
+    return `resumes/${timestamp}-${random}${ext}`;
+  }
+
+  async saveFile(buffer, fileKey, mimeType) {
+    if (this.driver === 's3') {
+      return this.saveToS3(buffer, fileKey, mimeType);
+    } else {
+      return this.saveToLocal(buffer, fileKey);
+    }
+  }
+
+  async saveToLocal(buffer, fileKey) {
+    const filePath = path.join(this.uploadDir, fileKey);
+    const dir = path.dirname(filePath);
+    
+    // Ensure directory exists
+    await fs.mkdir(dir, { recursive: true });
+    
+    // Save file
+    await fs.writeFile(filePath, buffer);
+    
+    return {
+      url: `/uploads/${fileKey}`,
+      path: filePath
+    };
+  }
+
+  async saveToS3(buffer, fileKey, mimeType) {
+    const params = {
+      Bucket: this.bucket,
+      Key: fileKey,
+      Body: buffer,
+      ContentType: mimeType
+    };
+
+    const result = await this.s3.upload(params).promise();
+    
+    return {
+      url: result.Location,
+      key: fileKey
+    };
+  }
+
+  async getSignedUrl(fileKey, expiresIn = 3600) {
+    if (this.driver === 's3') {
+      const params = {
+        Bucket: this.bucket,
+        Key: fileKey,
+        Expires: expiresIn
+      };
+      
+      return this.s3.getSignedUrl('getObject', params);
+    } else {
+      // For local files, return the direct URL pointing to backend server
+      const serverPort = process.env.SERVER_PORT || '8081';
+      const baseUrl = `http://localhost:${serverPort}`;
+      return `${baseUrl}/uploads/${fileKey}`;
+    }
+  }
+
+  async deleteFile(fileKey) {
+    if (this.driver === 's3') {
+      const params = {
+        Bucket: this.bucket,
+        Key: fileKey
+      };
+      
+      await this.s3.deleteObject(params).promise();
+    } else {
+      const filePath = path.join(this.uploadDir, fileKey);
+      try {
+        await fs.unlink(filePath);
+      } catch (error) {
+        // File might not exist, that's okay
+        console.log('File deletion warning:', error.message);
+      }
+    }
+  }
+
+  async getFileStream(fileKey) {
+    if (this.driver === 's3') {
+      const params = {
+        Bucket: this.bucket,
+        Key: fileKey
+      };
+      
+      return this.s3.getObject(params).createReadStream();
+    } else {
+      const filePath = path.join(this.uploadDir, fileKey);
+      const fs = require('fs');
+      return fs.createReadStream(filePath);
+    }
+  }
+}
+
+module.exports = new StorageService();
