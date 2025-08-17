@@ -27,6 +27,7 @@ const ResumesPage = () => {
       keepPreviousData: true,
       onSuccess: (data) => {
         console.log('Resumes data received:', data);
+        console.log('First resume structure:', data.resumes?.[0]);
       },
       onError: (error) => {
         console.error('Resumes query error:', error);
@@ -188,18 +189,18 @@ const ResumesPage = () => {
                 {resumes.map((resume) => (
                   <tr key={resume.id}>
                     <td>
-                      <strong>{resume.candidateName}</strong>
+                      <strong>{resume.name || resume.candidateName}</strong>
                       <br />
                       <small className="grey-text">
                         {resume.fileName}
                       </small>
                     </td>
                     <td>
-                      {resume.candidateEmail && (
-                        <div>{resume.candidateEmail}</div>
+                      {(resume.email || resume.candidateEmail) && (
+                        <div>{resume.email || resume.candidateEmail}</div>
                       )}
-                      {resume.candidatePhone && (
-                        <div>{resume.candidatePhone}</div>
+                      {(resume.phone || resume.candidatePhone) && (
+                        <div>{resume.phone || resume.candidatePhone}</div>
                       )}
                     </td>
                     <td>
@@ -212,10 +213,10 @@ const ResumesPage = () => {
                       <StatusBadge status={resume.status} />
                     </td>
                     <td>
-                      {resume.assignedTo ? (
+                      {(resume.assignedToUser || resume.assignedTo) ? (
                         <div>
                           <i className="material-icons tiny">person</i>
-                          {resume.assignedTo.fullName || resume.assignedTo.username}
+                          {(resume.assignedToUser || resume.assignedTo)?.fullName || (resume.assignedToUser || resume.assignedTo)?.username}
                         </div>
                       ) : (
                         <span className="grey-text">Unassigned</span>
@@ -225,7 +226,7 @@ const ResumesPage = () => {
                       <small>{formatDate(resume.createdAt)}</small>
                       <br />
                       <small className="grey-text">
-                        by {resume.uploadedBy.fullName || resume.uploadedBy.username}
+                        by {(resume.uploadedByUser || resume.uploadedBy)?.fullName || (resume.uploadedByUser || resume.uploadedBy)?.username}
                       </small>
                     </td>
                     <td>
@@ -249,7 +250,7 @@ const ResumesPage = () => {
                         )}
 
                         <WhatsAppButton
-                          candidateName={resume.candidateName}
+                          candidateName={resume.name || resume.candidateName}
                           skills={resume.skills}
                           resumeId={resume.id}
                         />

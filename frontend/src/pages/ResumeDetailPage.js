@@ -132,6 +132,7 @@ const ResumeDetailPage = () => {
   if (isLoading) return <LoadingSpinner />;
 
   if (fetchError) {
+    console.error('Fetch error details:', fetchError);
     return (
       <div className="container mt-2">
         <div className="error-message">
@@ -164,7 +165,13 @@ const ResumeDetailPage = () => {
   }
 
   const canEdit = user.role === 'admin' || 
-                 (user.role === 'recruiter' && resume.assignedToUserId === user.id);
+                 (user.role === 'recruiter' && (resumeInfo.assignedTo === user.id || resumeInfo.assignedToUserId === user.id));
+
+  // Add comprehensive debugging
+  console.log('ResumeDetailPage render - ID:', id);
+  console.log('ResumeDetailPage render - resumeData:', resumeData);
+  console.log('ResumeDetailPage render - resumeInfo:', resumeInfo);
+  console.log('ResumeDetailPage render - canEdit:', canEdit);
 
   return (
     <div className="container" style={{ marginTop: '2rem' }}>
