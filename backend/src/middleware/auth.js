@@ -6,6 +6,8 @@ const prisma = new PrismaClient();
 const authenticateToken = async (req, res, next) => {
   try {
     const token = req.cookies.accessToken;
+    console.log('Auth check - cookies received:', Object.keys(req.cookies));
+    console.log('Access token present:', !!token);
     
     if (!token) {
       return res.status(401).json({ error: 'Access token required' });
@@ -75,7 +77,7 @@ const setTokenCookies = (res, tokens) => {
   const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   };
 
   res.cookie('accessToken', tokens.accessToken, {

@@ -33,6 +33,9 @@ router.post('/login', validate(schemas.login), async (req, res) => {
     const tokens = generateTokens(user.id);
     setTokenCookies(res, tokens);
 
+    console.log('Login successful for user:', user.username);
+    console.log('Setting cookies with tokens');
+
     res.json({
       message: 'Login successful',
       user: {
