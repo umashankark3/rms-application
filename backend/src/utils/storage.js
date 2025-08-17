@@ -76,8 +76,10 @@ class StorageService {
       return this.s3.getSignedUrl('getObject', params);
     } else {
       // For local files, return the direct URL pointing to backend server
-      const serverPort = process.env.SERVER_PORT || '8081';
-      const baseUrl = `http://localhost:${serverPort}`;
+      // Use production URL in production, localhost in development
+      const baseUrl = process.env.NODE_ENV === 'production' 
+        ? (process.env.BACKEND_URL || 'https://rms-application-1.onrender.com')
+        : `http://localhost:${process.env.SERVER_PORT || '8081'}`;
       return `${baseUrl}/uploads/${fileKey}`;
     }
   }

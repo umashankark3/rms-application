@@ -93,6 +93,30 @@ app.get('/api/cors-test', (req, res) => {
   });
 });
 
+// Debug file URL generation
+app.get('/api/debug/file-url', async (req, res) => {
+  try {
+    const storageService = require('./utils/storage');
+    const storage = new storageService();
+    const testUrl = await storage.getSignedUrl('test-file-key');
+    
+    res.json({
+      message: 'File URL generation test',
+      testFileKey: 'test-file-key',
+      generatedUrl: testUrl,
+      storageDriver: process.env.STORAGE_DRIVER || 'local',
+      nodeEnv: process.env.NODE_ENV,
+      backendUrl: process.env.BACKEND_URL,
+      serverPort: process.env.SERVER_PORT
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'File URL generation failed',
+      details: error.message
+    });
+  }
+});
+
 // Debug endpoint to check database users
 app.get('/api/debug/users', async (req, res) => {
   try {
