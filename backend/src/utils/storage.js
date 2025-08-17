@@ -18,11 +18,22 @@ class StorageService {
     }
   }
 
-  generateFileKey(originalName) {
+  generateFileKey(originalName, candidateName = null) {
     const timestamp = Date.now();
-    const random = crypto.randomBytes(8).toString('hex');
+    const random = crypto.randomBytes(4).toString('hex'); // Shorter random string
     const ext = path.extname(originalName);
-    return `resumes/${timestamp}-${random}${ext}`;
+    
+    if (candidateName) {
+      // Clean candidate name: remove spaces, special chars, convert to uppercase
+      const cleanName = candidateName
+        .replace(/[^a-zA-Z0-9\s]/g, '') // Remove special characters
+        .replace(/\s+/g, '_') // Replace spaces with underscores
+        .toUpperCase(); // Convert to uppercase
+      
+      return `resumes/${cleanName}_${timestamp}_${random}${ext}`;
+    } else {
+      return `resumes/${timestamp}-${random}${ext}`;
+    }
   }
 
   async saveFile(buffer, fileKey, mimeType) {

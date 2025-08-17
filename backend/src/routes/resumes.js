@@ -8,6 +8,14 @@ const storageService = require('../utils/storage');
 const router = express.Router();
 const prisma = new PrismaClient();
 
+// Debug route to test resume routes are working
+router.get('/test', (req, res) => {
+  res.json({ 
+    message: 'Resume routes are working',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // POST /api/resumes - Create resume with file upload
 router.post('/', 
   authenticateToken,
@@ -32,8 +40,8 @@ router.post('/',
         return res.status(400).json({ error: 'Candidate name is required (min 2 characters)' });
       }
 
-      // Generate unique file key
-      const fileKey = storageService.generateFileKey(req.file.originalname);
+      // Generate unique file key with candidate name
+      const fileKey = storageService.generateFileKey(req.file.originalname, candidateName.trim());
 
       // Save file to storage
       await storageService.saveFile(req.file.buffer, fileKey, req.file.mimetype);
@@ -309,11 +317,19 @@ router.get('/:id/file',
   authenticateToken,
   async (req, res) => {
     try {
+      console.log('File route accessed - Resume ID:', req.params.id);
+      console.log('User:', req.user.username, 'Role:', req.user.role);
+      
       const resumeId = parseInt(req.params.id);
       
       const resume = await prisma.resume.findUnique({
         where: { id: resumeId }
       });
+
+      console.log('Resume found:', !!resume);
+      if (resume) {
+        console.log('Resume fileKey:', resume.fileKey);
+      }
 
       if (!resume) {
         return res.status(404).json({ error: 'Resume not found' });
