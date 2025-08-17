@@ -93,6 +93,96 @@ app.get('/api/debug/users', async (req, res) => {
   }
 });
 
+// Debug endpoint to check database resumes
+app.get('/api/debug/resumes', async (req, res) => {
+  try {
+    const { PrismaClient } = require('@prisma/client');
+    const prisma = new PrismaClient();
+    
+    const resumes = await prisma.resume.findMany({
+      take: 5 // Just get first 5
+    });
+    
+    res.json({
+      message: 'Database resumes',
+      count: resumes.length,
+      resumes: resumes
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Database error',
+      details: error.message
+    });
+  }
+});
+
+// Debug endpoint to check database structure
+app.get('/api/debug/tables', async (req, res) => {
+  try {
+    const { PrismaClient } = require('@prisma/client');
+    const prisma = new PrismaClient();
+    
+    // Try to query the information schema
+    const tables = await prisma.$queryRaw`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public'
+    `;
+    
+    res.json({
+      message: 'Database tables',
+      tables: tables
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Database error',
+      details: error.message
+    });
+  }
+});
+
+// Debug endpoint to create a test resume
+app.post('/api/debug/create-test-resume', async (req, res) => {
+  try {
+    const { PrismaClient } = require('@prisma/client');
+    const prisma = new PrismaClient();
+    
+    // Find admin user
+    const adminUser = await prisma.user.findFirst({
+      where: { role: 'admin' }
+    });
+    
+    if (!adminUser) {
+      return res.status(400).json({ error: 'No admin user found' });
+    }
+    
+    const testResume = await prisma.resume.create({
+      data: {
+        name: 'Test Candidate',
+        email: 'test@example.com',
+        phone: '+1234567890',
+        skills: ['JavaScript', 'React', 'Node.js'],
+        experience: 'Test experience description',
+        fileKey: 'test-file-key',
+        fileName: 'test-resume.pdf',
+        fileSize: 1024,
+        uploadedBy: adminUser.id,
+        status: 'new'
+      }
+    });
+    
+    res.json({
+      message: 'Test resume created',
+      resume: testResume
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Database error',
+      details: error.message
+    });
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
