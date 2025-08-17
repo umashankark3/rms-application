@@ -97,8 +97,7 @@ app.get('/api/cors-test', (req, res) => {
 app.get('/api/debug/file-url', async (req, res) => {
   try {
     const storageService = require('./utils/storage');
-    const storage = new storageService();
-    const testUrl = await storage.getSignedUrl('test-file-key');
+    const testUrl = await storageService.getSignedUrl('test-file-key');
     
     res.json({
       message: 'File URL generation test',
