@@ -88,7 +88,13 @@ class StorageService {
     } else {
       // For local files, return the direct URL pointing to backend server
       // Use production URL in production, localhost in development
-      const isProduction = process.env.NODE_ENV === 'production' || process.env.RENDER_SERVICE_NAME;
+      // Check multiple indicators for production environment
+      const isProduction = process.env.NODE_ENV === 'production' || 
+                          process.env.RENDER_SERVICE_NAME || 
+                          process.env.RENDER || 
+                          process.env.RAILWAY_ENVIRONMENT ||
+                          (typeof window === 'undefined' && !process.env.SERVER_PORT);
+      
       const baseUrl = isProduction
         ? (process.env.BACKEND_URL || 'https://rms-application-1.onrender.com')
         : `http://localhost:${process.env.SERVER_PORT || '8081'}`;
@@ -97,6 +103,9 @@ class StorageService {
         fileKey,
         nodeEnv: process.env.NODE_ENV,
         renderService: process.env.RENDER_SERVICE_NAME,
+        render: process.env.RENDER,
+        railway: process.env.RAILWAY_ENVIRONMENT,
+        serverPort: process.env.SERVER_PORT,
         isProduction,
         backendUrl: process.env.BACKEND_URL,
         finalBaseUrl: baseUrl,

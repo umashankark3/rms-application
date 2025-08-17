@@ -59,8 +59,13 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
 
 // Serve uploaded files (when using local storage)
-if (process.env.STORAGE_DRIVER === 'local') {
-  app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+// Always serve uploads route since we're using local storage on Render
+const storageDriver = process.env.STORAGE_DRIVER || 'local';
+console.log('Storage driver:', storageDriver);
+if (storageDriver === 'local') {
+  const uploadsPath = path.join(__dirname, '../uploads');
+  console.log('Serving uploads from:', uploadsPath);
+  app.use('/uploads', express.static(uploadsPath));
 }
 
 // API routes
