@@ -121,6 +121,69 @@ app.get('/api/debug/file-url', async (req, res) => {
   }
 });
 
+// Debug file system and uploads directory
+app.get('/api/debug/filesystem', async (req, res) => {
+  try {
+    const fs = require('fs').promises;
+    const path = require('path');
+    
+    const uploadsDir = path.join(__dirname, '../uploads');
+    const resumesDir = path.join(uploadsDir, 'resumes');
+    
+    let uploadsDirExists = false;
+    let resumesDirExists = false;
+    let uploadsFiles = [];
+    let resumesFiles = [];
+    
+    try {
+      await fs.access(uploadsDir);
+      uploadsDirExists = true;
+      uploadsFiles = await fs.readdir(uploadsDir);
+    } catch (error) {
+      // Directory doesn't exist, try to create it
+      try {
+        await fs.mkdir(uploadsDir, { recursive: true });
+        uploadsDirExists = true;
+        uploadsFiles = [];
+      } catch (createError) {
+        uploadsDirExists = false;
+      }
+    }
+    
+    try {
+      await fs.access(resumesDir);
+      resumesDirExists = true;
+      resumesFiles = await fs.readdir(resumesDir);
+    } catch (error) {
+      // Directory doesn't exist, try to create it
+      try {
+        await fs.mkdir(resumesDir, { recursive: true });
+        resumesDirExists = true;
+        resumesFiles = [];
+      } catch (createError) {
+        resumesDirExists = false;
+      }
+    }
+    
+    res.json({
+      message: 'File system debug info',
+      uploadsDirectory: uploadsDir,
+      resumesDirectory: resumesDir,
+      uploadsDirExists,
+      resumesDirExists,
+      uploadsFiles,
+      resumesFiles,
+      currentWorkingDir: process.cwd(),
+      __dirname: __dirname
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'File system debug failed',
+      details: error.message
+    });
+  }
+});
+
 // Debug endpoint to check database users
 app.get('/api/debug/users', async (req, res) => {
   try {
