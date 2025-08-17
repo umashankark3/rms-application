@@ -63,6 +63,36 @@ app.get('/api/debug', (req, res) => {
   });
 });
 
+// Debug endpoint to check database users
+app.get('/api/debug/users', async (req, res) => {
+  try {
+    const { PrismaClient } = require('@prisma/client');
+    const prisma = new PrismaClient();
+    
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        username: true,
+        fullName: true,
+        role: true,
+        passwordHash: true,
+        createdAt: true
+      }
+    });
+    
+    res.json({
+      message: 'Database users',
+      count: users.length,
+      users: users
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Database error',
+      details: error.message
+    });
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
