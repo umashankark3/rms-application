@@ -130,10 +130,10 @@ router.get('/',
           where,
           include: {
             uploadedByUser: {
-              select: { username: true, fullName: true }
+              select: { id: true, username: true, fullName: true }
             },
             assignedToUser: {
-              select: { username: true, fullName: true }
+              select: { id: true, username: true, fullName: true }
             }
           },
           orderBy: { createdAt: 'desc' },
@@ -144,6 +144,7 @@ router.get('/',
       ]);
 
       console.log('Found resumes:', resumes.length, 'Total count:', totalCount);
+      console.log('First resume with relationships:', JSON.stringify(resumes[0], null, 2));
 
       res.json({
         resumes,
@@ -172,10 +173,10 @@ router.get('/:id',
         where: { id: resumeId },
         include: {
           uploadedByUser: {
-            select: { username: true, fullName: true }
+            select: { id: true, username: true, fullName: true }
           },
           assignedToUser: {
-            select: { username: true, fullName: true }
+            select: { id: true, username: true, fullName: true }
           }
         }
       });
