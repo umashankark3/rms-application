@@ -41,47 +41,40 @@ model User {
 }
 
 model Resume {
-  id              Int           @id @default(autoincrement())
-  candidateName   String        @db.VarChar(140)
-  candidateEmail  String?       @db.VarChar(140)
-  candidatePhone  String?       @db.VarChar(20)
-  experienceYears Decimal?      @db.Decimal(3, 1)
-  skills          String?       @db.Text
-  notes           String?       @db.Text
-  fileKey         String        @db.VarChar(255)
-  fileName        String        @db.VarChar(255)
-  fileSize        Int?
-  mimeType        String?       @db.VarChar(120)
-  status          ResumeStatus  @default(new)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  // Foreign Keys
-  uploadedByUserId  Int
-  assignedToUserId  Int?
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(255)
+  email       String        @db.VarChar(255)
+  phone       String?       @db.VarChar(20)
+  skills      Json?
+  experience  String?       @db.Text
+  status      ResumeStatus  @default(new)
+  fileKey     String        @db.VarChar(255)
+  fileName    String        @db.VarChar(255)
+  fileSize    Int
+  uploadedBy  Int
+  assignedTo  Int?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now()) @updatedAt
 
   // Relations
-  uploadedBy User @relation("UploadedBy", fields: [uploadedByUserId], references: [id])
-  assignedTo User? @relation("AssignedTo", fields: [assignedToUserId], references: [id])
-  shareLinks ShareLink[]
+  uploadedByUser User @relation("UploadedBy", fields: [uploadedBy], references: [id])
+  assignedToUser User? @relation("AssignedTo", fields: [assignedTo], references: [id])
+  shareLinks     ShareLink[]
 
   @@map("resumes")
 }
 
 model ShareLink {
   id        Int      @id @default(autoincrement())
-  token     String   @unique @db.Char(32)
-  expiresAt DateTime?
-  revoked   Boolean  @default(false)
+  token     String   @unique @db.VarChar(255)
+  resumeId  Int
+  createdBy Int
+  expiresAt DateTime
   createdAt DateTime @default(now())
 
-  // Foreign Keys
-  resumeId        Int
-  createdByUserId Int
-
   // Relations
-  resume    Resume @relation(fields: [resumeId], references: [id])
-  createdBy User   @relation(fields: [createdByUserId], references: [id])
+  resume      Resume @relation(fields: [resumeId], references: [id])
+  createdByUser User @relation(fields: [createdBy], references: [id])
 
-  @@map("share_links")
+  @@map("shareLinks")
 }

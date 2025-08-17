@@ -41,21 +41,19 @@ router.post('/',
       // Create resume record
       const resume = await prisma.resume.create({
         data: {
-          candidateName: candidateName.trim(),
-          candidateEmail: candidateEmail?.trim() || null,
-          candidatePhone: candidatePhone?.trim() || null,
-          experienceYears: experienceYears ? parseFloat(experienceYears) : null,
-          skills: skills?.trim() || null,
-          notes: notes?.trim() || null,
+          name: candidateName.trim(),
+          email: candidateEmail?.trim() || '',
+          phone: candidatePhone?.trim() || null,
+          experience: notes?.trim() || null,
+          skills: skills ? JSON.parse(`["${skills.split(',').map(s => s.trim()).join('","')}"]`) : null,
           fileKey,
           fileName: req.file.originalname,
           fileSize: req.file.size,
-          mimeType: req.file.mimetype,
-          uploadedByUserId: req.user.id,
+          uploadedBy: req.user.id,
           status: 'new'
         },
         include: {
-          uploadedBy: {
+          uploadedByUser: {
             select: { username: true, fullName: true }
           }
         }
@@ -88,9 +86,9 @@ router.get('/',
       // Search in name, email, and skills
       if (q && q.trim() !== '') {
         where.OR = [
-          { candidateName: { contains: q } },
-          { candidateEmail: { contains: q } },
-          { skills: { contains: q } }
+          { name: { contains: q } },
+          { email: { contains: q } },
+          { experience: { contains: q } }
         ];
       }
 
@@ -105,7 +103,7 @@ router.get('/',
           where: { username: assignedTo }
         });
         if (assignedUser) {
-          where.assignedToUserId = assignedUser.id;
+          where.assignedTo = assignedUser.id;
         }
       }
 
@@ -113,11 +111,11 @@ router.get('/',
       if (req.user.role === 'recruiter') {
         // Recruiters can only see resumes assigned to them or unassigned ones they uploaded
         where.OR = [
-          { assignedToUserId: req.user.id },
+          { assignedTo: req.user.id },
           { 
             AND: [
-              { uploadedByUserId: req.user.id },
-              { assignedToUserId: null }
+              { uploadedBy: req.user.id },
+              { assignedTo: null }
             ]
           }
         ];
@@ -127,10 +125,10 @@ router.get('/',
         prisma.resume.findMany({
           where,
           include: {
-            uploadedBy: {
+            uploadedByUser: {
               select: { username: true, fullName: true }
             },
-            assignedTo: {
+            assignedToUser: {
               select: { username: true, fullName: true }
             }
           },
