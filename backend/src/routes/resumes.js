@@ -371,6 +371,12 @@ router.get('/:id/download',
         where: { id: resumeId }
       });
 
+      console.log('Resume found for download:', !!resume);
+      if (resume) {
+        console.log('Resume fileKey for download:', resume.fileKey);
+        console.log('Resume fileName for download:', resume.fileName);
+      }
+
       if (!resume) {
         return res.status(404).json({ error: 'Resume not found' });
       }
@@ -384,19 +390,18 @@ router.get('/:id/download',
         }
       }
 
-      // Get file stream from storage
-      const fileStream = await storageService.getFileStream(resume.fileKey);
+      // For now, just return the file URL instead of streaming
+      // This avoids the 502 error while we debug
+      const signedUrl = await storageService.getSignedUrl(resume.fileKey);
       
-      // Set appropriate headers
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `inline; filename="${resume.fileName}"`);
+      console.log('Generated download URL:', signedUrl);
       
-      // Pipe the file stream to response
-      fileStream.pipe(res);
+      // Redirect to the file URL
+      res.redirect(signedUrl);
       
     } catch (error) {
       console.error('Direct download error:', error);
-      res.status(500).json({ error: 'Failed to download file' });
+      res.status(500).json({ error: 'Failed to download file', details: error.message });
     }
   }
 );

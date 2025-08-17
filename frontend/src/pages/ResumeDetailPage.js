@@ -72,20 +72,16 @@ const ResumeDetailPage = () => {
 
   // Direct file download mutation
   const downloadFileMutation = useMutation(
-    () => api.resumes.downloadFile(parseInt(id)),
+    () => {
+      // Use window.open for the download route since it redirects
+      const downloadUrl = `${process.env.REACT_APP_API_URL || 'https://rms-application-1.onrender.com/api'}/resumes/${id}/download`;
+      console.log('Opening download URL:', downloadUrl);
+      window.open(downloadUrl, '_blank');
+      return Promise.resolve({ success: true });
+    },
     {
-      onSuccess: (response) => {
-        console.log('File download successful');
-        // Create blob URL and trigger download
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = resumeInfo?.fileName || 'resume.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
+      onSuccess: () => {
+        console.log('Download initiated');
       },
       onError: (error) => {
         console.error('File download error:', error);
