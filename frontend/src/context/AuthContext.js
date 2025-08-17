@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   const queryClient = useQueryClient();
 
   // Query to check current user
-  const { data: userData, isLoading } = useQuery(
+  const { isLoading } = useQuery(
     'currentUser',
     api.auth.me,
     {

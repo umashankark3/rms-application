@@ -16,7 +16,7 @@ const ResumeDetailPage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const { register, handleSubmit, watch, setValue } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
 
   // Fetch resume details
   const { data: resumeData, isLoading, error: fetchError } = useQuery(
