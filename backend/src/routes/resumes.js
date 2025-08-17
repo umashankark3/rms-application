@@ -76,6 +76,8 @@ router.get('/',
   validate(schemas.resumeQuery),
   async (req, res) => {
     try {
+      console.log('GET /api/resumes - User:', req.user.username, 'Role:', req.user.role);
+      console.log('Query params:', req.query);
       const { q, status, assignedTo, page = 1, limit = 10 } = req.query;
       const pageNum = parseInt(page) || 1;
       const limitNum = parseInt(limit) || 10;
@@ -121,6 +123,8 @@ router.get('/',
         ];
       }
 
+      console.log('Final where clause:', JSON.stringify(where, null, 2));
+      
       const [resumes, totalCount] = await Promise.all([
         prisma.resume.findMany({
           where,
@@ -138,6 +142,8 @@ router.get('/',
         }),
         prisma.resume.count({ where })
       ]);
+
+      console.log('Found resumes:', resumes.length, 'Total count:', totalCount);
 
       res.json({
         resumes,
@@ -165,10 +171,10 @@ router.get('/:id',
       const resume = await prisma.resume.findUnique({
         where: { id: resumeId },
         include: {
-          uploadedBy: {
+          uploadedByUser: {
             select: { username: true, fullName: true }
           },
-          assignedTo: {
+          assignedToUser: {
             select: { username: true, fullName: true }
           }
         }
@@ -180,8 +186,8 @@ router.get('/:id',
 
       // Check permissions
       if (req.user.role === 'recruiter') {
-        const canAccess = resume.assignedToUserId === req.user.id || 
-                         resume.uploadedByUserId === req.user.id;
+        const canAccess = resume.assignedTo === req.user.id || 
+                         resume.uploadedBy === req.user.id;
         if (!canAccess) {
           return res.status(403).json({ error: 'Access denied' });
         }
@@ -214,7 +220,7 @@ router.patch('/:id',
 
       // Check permissions
       if (req.user.role === 'recruiter') {
-        const canEdit = resume.assignedToUserId === req.user.id;
+        const canEdit = resume.assignedTo === req.user.id;
         if (!canEdit) {
           return res.status(403).json({ error: 'You can only update resumes assigned to you' });
         }
@@ -273,7 +279,7 @@ router.post('/:id/assign',
       const updatedResume = await prisma.resume.update({
         where: { id: resumeId },
         data: { 
-          assignedToUserId: assignee.id,
+          assignedTo: assignee.id,
           status: 'assigned'
         },
         include: {
@@ -314,8 +320,8 @@ router.get('/:id/file',
 
       // Check permissions
       if (req.user.role === 'recruiter') {
-        const canAccess = resume.assignedToUserId === req.user.id || 
-                         resume.uploadedByUserId === req.user.id;
+        const canAccess = resume.assignedTo === req.user.id || 
+                         resume.uploadedBy === req.user.id;
         if (!canAccess) {
           return res.status(403).json({ error: 'Access denied' });
         }
