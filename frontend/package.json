@@ -42,5 +42,9 @@
   "devDependencies": {
     "react-scripts": "5.0.1"
   },
+  "engines": {
+    "node": "18.19.0",
+    "npm": ">=9.0.0"
+  },
   "proxy": "http://localhost:8081"
 }
