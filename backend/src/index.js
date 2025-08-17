@@ -18,7 +18,11 @@ const PORT = process.env.SERVER_PORT || 8080;
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.APP_BASE_URL || 'http://localhost:3000',
+  origin: [
+    'http://localhost:3000',
+    'https://msrms.netlify.app',
+    process.env.FRONTEND_URL
+  ].filter(Boolean),
   credentials: true
 }));
 
