@@ -3,7 +3,15 @@ import React from 'react';
 const SkillsChips = ({ skills, maxDisplay = 5 }) => {
   if (!skills) return null;
 
-  const skillsArray = skills.split(',').map(skill => skill.trim()).filter(Boolean);
+  // Handle both array and string formats
+  let skillsArray;
+  if (Array.isArray(skills)) {
+    skillsArray = skills.filter(Boolean);
+  } else if (typeof skills === 'string') {
+    skillsArray = skills.split(',').map(skill => skill.trim()).filter(Boolean);
+  } else {
+    return null;
+  }
   
   if (skillsArray.length === 0) return null;
 
