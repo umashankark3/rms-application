@@ -17,14 +17,34 @@ const PORT = process.env.SERVER_PORT || 8080;
 
 // Security middleware
 app.use(helmet());
-app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://msrms.netlify.app',
-    process.env.FRONTEND_URL
-  ].filter(Boolean),
-  credentials: true
-}));
+// CORS configuration with debugging
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://msrms.netlify.app',
+      process.env.FRONTEND_URL
+    ].filter(Boolean);
+    
+    console.log('CORS check - Origin:', origin);
+    console.log('CORS check - Allowed origins:', allowedOrigins);
+    
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
+};
+
+app.use(cors(corsOptions));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -59,7 +79,17 @@ app.get('/api/debug', (req, res) => {
   res.json({ 
     message: 'API is working', 
     timestamp: new Date().toISOString(),
-    headers: req.headers.origin || 'no-origin'
+    origin: req.headers.origin || 'no-origin',
+    corsAllowed: true
+  });
+});
+
+// Simple CORS test endpoint
+app.get('/api/cors-test', (req, res) => {
+  res.json({
+    message: 'CORS is working',
+    origin: req.headers.origin,
+    timestamp: new Date().toISOString()
   });
 });
 
