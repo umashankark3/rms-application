@@ -24,9 +24,14 @@ const ResumeDetailPage = () => {
     () => api.resumes.get(parseInt(id)),
     {
       onSuccess: (data) => {
+        console.log('Resume data received:', data);
         // Set form default values
-        setValue('status', data.resume.status);
-        setValue('notes', data.resume.notes || '');
+        const resumeData = data.resume || data;
+        setValue('status', resumeData.status);
+        setValue('notes', resumeData.notes || resumeData.experience || '');
+      },
+      onError: (error) => {
+        console.error('Resume fetch error:', error);
       }
     }
   );
@@ -87,10 +92,11 @@ const ResumeDetailPage = () => {
 
   const onUpdateSubmit = (data) => {
     const updateData = {};
-    if (data.status !== resumeData?.resume?.status) {
+    const currentResume = resumeData?.resume || resumeData;
+    if (data.status !== currentResume?.status) {
       updateData.status = data.status;
     }
-    if (data.notes !== (resumeData?.resume?.notes || '')) {
+    if (data.notes !== (currentResume?.notes || currentResume?.experience || '')) {
       updateData.notes = data.notes;
     }
 
@@ -140,8 +146,10 @@ const ResumeDetailPage = () => {
   }
 
   const { resume } = resumeData || {};
+  // Handle both old and new field names
+  const resumeInfo = resume || resumeData;
 
-  if (!resume) {
+  if (!resumeInfo) {
     return (
       <div className="container mt-2">
         <div className="error-message">
@@ -194,22 +202,22 @@ const ResumeDetailPage = () => {
             <div className="card-content">
               <span className="card-title">
                 <i className="material-icons left">person</i>
-                {resume.candidateName}
+                {resumeInfo.name || resumeInfo.candidateName}
               </span>
 
               <div className="row">
                 <div className="col s12 m6">
                   <p>
                     <i className="material-icons tiny">email</i>
-                    <strong> Email:</strong> {resume.candidateEmail || 'Not provided'}
+                    <strong> Email:</strong> {resumeInfo.email || resumeInfo.candidateEmail || 'Not provided'}
                   </p>
                   <p>
                     <i className="material-icons tiny">phone</i>
-                    <strong> Phone:</strong> {resume.candidatePhone || 'Not provided'}
+                    <strong> Phone:</strong> {resumeInfo.phone || resumeInfo.candidatePhone || 'Not provided'}
                   </p>
                   <p>
                     <i className="material-icons tiny">work</i>
-                    <strong> Experience:</strong> {resume.experienceYears ? `${resume.experienceYears} years` : 'Not specified'}
+                    <strong> Experience:</strong> {resumeInfo.experienceYears ? `${resumeInfo.experienceYears} years` : 'Not specified'}
                   </p>
                 </div>
                 <div className="col s12 m6">
@@ -306,9 +314,9 @@ const ResumeDetailPage = () => {
                   </a>
 
                   <WhatsAppButton
-                    candidateName={resume.candidateName}
-                    skills={resume.skills}
-                    resumeId={resume.id}
+                    candidateName={resumeInfo.name || resumeInfo.candidateName}
+                                    skills={resumeInfo.skills}
+                resumeId={resumeInfo.id}
                   />
                 </div>
               </div>
