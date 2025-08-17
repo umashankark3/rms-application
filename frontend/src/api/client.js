@@ -101,6 +101,13 @@ const api = {
     },
     getFileUrl: async (id) => {
       return apiClient.get(`/resumes/${id}/file`);
+    },
+    downloadFile: async (id) => {
+      // Use the direct download route instead of static file URLs
+      const response = await apiClient.get(`/resumes/${id}/download`, {
+        responseType: 'blob'
+      });
+      return response;
     }
   },
 

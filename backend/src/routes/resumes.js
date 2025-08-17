@@ -358,4 +358,47 @@ router.get('/:id/file',
   }
 );
 
+// GET /api/resumes/:id/download - Direct file download through API
+router.get('/:id/download', 
+  authenticateToken,
+  async (req, res) => {
+    try {
+      console.log('Direct download route accessed - Resume ID:', req.params.id);
+      
+      const resumeId = parseInt(req.params.id);
+      
+      const resume = await prisma.resume.findUnique({
+        where: { id: resumeId }
+      });
+
+      if (!resume) {
+        return res.status(404).json({ error: 'Resume not found' });
+      }
+
+      // Check permissions
+      if (req.user.role === 'recruiter') {
+        const canAccess = resume.assignedTo === req.user.id || 
+                         resume.uploadedBy === req.user.id;
+        if (!canAccess) {
+          return res.status(403).json({ error: 'Access denied' });
+        }
+      }
+
+      // Get file stream from storage
+      const fileStream = await storageService.getFileStream(resume.fileKey);
+      
+      // Set appropriate headers
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `inline; filename="${resume.fileName}"`);
+      
+      // Pipe the file stream to response
+      fileStream.pipe(res);
+      
+    } catch (error) {
+      console.error('Direct download error:', error);
+      res.status(500).json({ error: 'Failed to download file' });
+    }
+  }
+);
+
 module.exports = router;

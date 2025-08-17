@@ -70,7 +70,31 @@ const ResumeDetailPage = () => {
     }
   );
 
-  // Get file URL mutation
+  // Direct file download mutation
+  const downloadFileMutation = useMutation(
+    () => api.resumes.downloadFile(parseInt(id)),
+    {
+      onSuccess: (response) => {
+        console.log('File download successful');
+        // Create blob URL and trigger download
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = resumeInfo?.fileName || 'resume.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      },
+      onError: (error) => {
+        console.error('File download error:', error);
+        setError(error.message);
+      }
+    }
+  );
+
+  // Get file URL mutation (fallback for view)
   const getFileMutation = useMutation(
     () => api.resumes.getFileUrl(parseInt(id)),
     {
@@ -79,13 +103,16 @@ const ResumeDetailPage = () => {
         // Try to open the file URL
         const newWindow = window.open(data.url, '_blank');
         if (!newWindow) {
-          // If popup was blocked, show the URL to user
-          setError(`Popup blocked. Please visit: ${data.url}`);
+          // If popup was blocked, try direct download instead
+          console.log('Popup blocked, trying direct download');
+          downloadFileMutation.mutate();
         }
       },
       onError: (error) => {
         console.error('File URL error:', error);
-        setError(error.message);
+        // If URL fails, try direct download
+        console.log('File URL failed, trying direct download');
+        downloadFileMutation.mutate();
       }
     }
   );
