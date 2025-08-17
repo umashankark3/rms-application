@@ -39,9 +39,6 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "react-scripts": "5.0.1"
-  },
   "engines": {
     "node": "18.19.0",
     "npm": ">=9.0.0"
