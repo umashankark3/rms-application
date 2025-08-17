@@ -79,6 +79,15 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+// Simple test route
+app.get('/test', (req, res) => {
+  res.json({ 
+    message: 'Basic routing works',
+    timestamp: new Date().toISOString(),
+    version: '1.0.0'
+  });
+});
+
 // Debug endpoint to test API connection
 app.get('/api/debug', (req, res) => {
   res.json({ 
@@ -321,4 +330,7 @@ app.use('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`RMS backend server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Storage driver: ${process.env.STORAGE_DRIVER || 'local'}`);
+  console.log(`Routes registered: /health, /test, /api/auth, /api/users, /api/resumes, /api/sharelinks`);
+  console.log(`Server started at: ${new Date().toISOString()}`);
 });
