@@ -284,6 +284,7 @@ body.light-theme .card {
 @media only screen and (max-width: 600px) {
   .container {
     width: 95%;
+    padding: 0 0.5rem;
   }
   
   .card {
@@ -293,5 +294,73 @@ body.light-theme .card {
   .btn-small {
     padding: 0 1rem;
     font-size: 0.8rem;
+  }
+  
+  /* Fix navigation for mobile */
+  nav .brand-logo {
+    font-size: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  /* Fix form inputs on mobile */
+  .input-field {
+    margin-bottom: 1.5rem;
+  }
+  
+  .input-field input[type=text],
+  .input-field input[type=email],
+  .input-field input[type=password],
+  .input-field input[type=tel],
+  .input-field textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+    padding: 0.5rem;
+  }
+  
+  /* Fix buttons on mobile */
+  .btn {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .btn:not(.btn-flat):not(.btn-large) {
+    height: 48px; /* Better touch target */
+    line-height: 48px;
+  }
+  
+  /* Fix table responsiveness */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  /* Fix file upload area */
+  .file-drop-zone {
+    padding: 2rem 1rem;
+    min-height: 120px;
+  }
+  
+  /* Fix modal on mobile */
+  .modal {
+    width: 95%;
+    max-height: 90%;
+  }
+  
+  /* Fix responsive columns */
+  .col.s12 {
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  /* Fix navbar mobile menu */
+  .sidenav {
+    width: 250px;
+  }
+  
+  .sidenav li > a {
+    height: 48px;
+    line-height: 48px;
+    padding: 0 32px;
   }
 }
