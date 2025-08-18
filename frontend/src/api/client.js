@@ -103,11 +103,11 @@ const api = {
       return apiClient.get(`/resumes/${id}/file`);
     },
     downloadFile: async (id) => {
-      // Use the direct download route instead of static file URLs
-      const response = await apiClient.get(`/resumes/${id}/download`, {
-        responseType: 'blob'
-      });
-      return response;
+      // Use window.open for direct download to handle redirects properly
+      const downloadUrl = `${apiClient.defaults.baseURL}/resumes/${id}/download`;
+      console.log('Opening download URL:', downloadUrl);
+      window.open(downloadUrl, '_blank');
+      return Promise.resolve({ success: true });
     }
   },
 

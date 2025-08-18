@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import api from '../api/client';
 
 const AssignModal = ({ resumeId, onClose, onSuccess }) => {
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
+
+  // Fetch users for dropdown
+  const { data: users, isLoading: usersLoading } = useQuery(
+    'users',
+    api.users.list,
+    {
+      onError: (error) => {
+        console.error('Failed to fetch users:', error);
+        setError('Failed to load users');
+      }
+    }
+  );
 
   const assignMutation = useMutation(
     (username) => api.resumes.assign(resumeId, username),
@@ -19,7 +31,7 @@ const AssignModal = ({ resumeId, onClose, onSuccess }) => {
   );
 
   useEffect(() => {
-    // Initialize modal
+    // Initialize modal and select
     const modal = document.getElementById('assignModal');
     if (modal && window.M) {
       const instance = window.M.Modal.init(modal, {
@@ -28,11 +40,19 @@ const AssignModal = ({ resumeId, onClose, onSuccess }) => {
       });
       instance.open();
 
+      // Initialize select dropdown after users are loaded
+      if (users && users.length > 0) {
+        setTimeout(() => {
+          const selects = document.querySelectorAll('#assignModal select');
+          window.M.FormSelect.init(selects);
+        }, 100);
+      }
+
       return () => {
         instance.destroy();
       };
     }
-  }, [onClose]);
+  }, [onClose, users]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -71,17 +91,23 @@ const AssignModal = ({ resumeId, onClose, onSuccess }) => {
         <form onSubmit={handleSubmit}>
           <div className="input-field">
             <i className="material-icons prefix">account_circle</i>
-            <input
+            <select
               id="assignUsername"
-              type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              disabled={assignMutation.isLoading}
-            />
-            <label htmlFor="assignUsername">Username</label>
-            <span className="helper-text">
-              Enter the username of the person to assign this resume to
-            </span>
+              disabled={assignMutation.isLoading || usersLoading}
+            >
+              <option value="" disabled>Choose user to assign</option>
+              {users?.filter(user => user.role === 'recruiter').map(user => (
+                <option key={user.username} value={user.username}>
+                  {user.fullName} ({user.username})
+                </option>
+              ))}
+            </select>
+            <label htmlFor="assignUsername">Assign to User</label>
+            {usersLoading && (
+              <span className="helper-text">Loading users...</span>
+            )}
           </div>
 
           <div className="modal-footer">

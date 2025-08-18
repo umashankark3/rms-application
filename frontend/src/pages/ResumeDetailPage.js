@@ -95,20 +95,25 @@ const ResumeDetailPage = () => {
     () => api.resumes.getFileUrl(parseInt(id)),
     {
       onSuccess: (data) => {
-        console.log('File URL received:', data.url);
-        // Try to open the file URL
-        const newWindow = window.open(data.url, '_blank');
-        if (!newWindow) {
-          // If popup was blocked, try direct download instead
-          console.log('Popup blocked, trying direct download');
-          downloadFileMutation.mutate();
+        console.log('File URL received:', data);
+        if (data && data.url) {
+          console.log('Opening file URL:', data.url);
+          // Try to open the file URL
+          const newWindow = window.open(data.url, '_blank');
+          if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+            // If popup was blocked, show message and provide direct link
+            console.log('Popup blocked, providing direct link');
+            setError('Popup blocked. Please click the "Direct Link" button or allow popups for this site.');
+          }
+        } else {
+          console.error('No URL in response:', data);
+          setError('Invalid file URL received');
         }
       },
       onError: (error) => {
         console.error('File URL error:', error);
-        // If URL fails, try direct download
-        console.log('File URL failed, trying direct download');
-        downloadFileMutation.mutate();
+        const errorMessage = error?.response?.data?.error || error.message || 'Failed to get file URL';
+        setError(`File access failed: ${errorMessage}`);
       }
     }
   );

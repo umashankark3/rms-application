@@ -23,14 +23,42 @@ const Navbar = () => {
 
   useEffect(() => {
     // Initialize Materialize components
-    if (window.M) {
-      const sidenavs = document.querySelectorAll('.sidenav');
-      const dropdowns = document.querySelectorAll('.dropdown-trigger');
-      
-      window.M.Sidenav.init(sidenavs);
-      window.M.Dropdown.init(dropdowns);
+    const initMaterialize = () => {
+      if (window.M) {
+        const sidenavs = document.querySelectorAll('.sidenav');
+        const dropdowns = document.querySelectorAll('.dropdown-trigger');
+        
+        // Destroy existing instances first
+        sidenavs.forEach(sidenav => {
+          const instance = window.M.Sidenav.getInstance(sidenav);
+          if (instance) instance.destroy();
+        });
+        
+        dropdowns.forEach(dropdown => {
+          const instance = window.M.Dropdown.getInstance(dropdown);
+          if (instance) instance.destroy();
+        });
+        
+        // Initialize new instances
+        window.M.Sidenav.init(sidenavs, {
+          edge: 'left',
+          draggable: true
+        });
+        window.M.Dropdown.init(dropdowns, {
+          coverTrigger: false,
+          constrainWidth: false
+        });
+      }
+    };
+
+    // Wait for DOM to be ready
+    if (document.readyState === 'complete') {
+      initMaterialize();
+    } else {
+      window.addEventListener('load', initMaterialize);
+      return () => window.removeEventListener('load', initMaterialize);
     }
-  }, []);
+  }, [user]); // Re-initialize when user changes
 
   return (
     <div className="navbar-fixed">
