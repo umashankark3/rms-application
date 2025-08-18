@@ -1,0 +1,302 @@
+{
+  "projectName": "RMS - Resume Management System",
+  "version": "1.0.0",
+  "description": "A comprehensive resume management system for recruiters and administrators to manage candidate resumes with role-based access control, file management, and sharing capabilities.",
+  "stakeholders": [
+    {
+      "role": "Administrator",
+      "responsibilities": ["User management", "Full resume access", "System configuration"],
+      "permissions": ["Create users", "View all resumes", "Assign resumes", "Manage share links"]
+    },
+    {
+      "role": "Recruiter",
+      "responsibilities": ["Resume review", "Candidate evaluation", "Resume assignment"],
+      "permissions": ["View assigned resumes", "Upload resumes", "Update resume status", "Create share links"]
+    }
+  ],
+  "functionalRequirements": {
+    "authentication": {
+      "description": "Secure user authentication with role-based access control",
+      "features": [
+        "JWT-based authentication with httpOnly cookies",
+        "Login/logout functionality",
+        "Session persistence",
+        "Role-based route protection",
+        "Automatic session refresh"
+      ],
+      "acceptance_criteria": [
+        "Users can login with valid credentials",
+        "Invalid login attempts are rejected with appropriate errors",
+        "Sessions persist across browser refreshes",
+        "Users are redirected based on their role",
+        "Logout clears all session data"
+      ]
+    },
+    "resumeManagement": {
+      "description": "Complete resume lifecycle management",
+      "features": [
+        "PDF file upload with validation",
+        "Candidate information capture",
+        "Resume status tracking",
+        "File naming with candidate names",
+        "Resume assignment to recruiters",
+        "Search and filtering capabilities"
+      ],
+      "acceptance_criteria": [
+        "Only PDF files can be uploaded",
+        "File names follow CANDIDATE_NAME_timestamp_random.ext format",
+        "Resume status can be updated (new, reviewing, assigned, shortlisted, rejected)",
+        "Resumes can be assigned to specific recruiters",
+        "Search works across candidate names, emails, and skills",
+        "Filtering works by status and assignee"
+      ]
+    },
+    "fileAccess": {
+      "description": "Secure file viewing and downloading",
+      "features": [
+        "Resume file viewing in browser",
+        "Direct file download",
+        "Permission-based access control",
+        "Mobile-compatible file handling"
+      ],
+      "acceptance_criteria": [
+        "Users can only access resumes they have permission to view",
+        "Files open in new browser tab or download automatically",
+        "File access works on both desktop and mobile devices",
+        "Unauthorized access attempts are blocked"
+      ]
+    },
+    "userManagement": {
+      "description": "Admin-only user management functionality",
+      "features": [
+        "Create new users",
+        "Assign user roles",
+        "View user list",
+        "User role-based restrictions"
+      ],
+      "acceptance_criteria": [
+        "Only admins can access user management features",
+        "New users can be created with username, full name, and role",
+        "User list shows all system users",
+        "Recruiters cannot access admin features"
+      ]
+    },
+    "shareLinks": {
+      "description": "Secure resume sharing via time-limited links",
+      "features": [
+        "Generate shareable links for resumes",
+        "WhatsApp integration for sharing",
+        "Link expiration management",
+        "Revoke share links"
+      ],
+      "acceptance_criteria": [
+        "Share links provide access without authentication",
+        "Links have configurable expiration times",
+        "Expired links are automatically rejected",
+        "WhatsApp sharing includes candidate information",
+        "Share links can be revoked by authorized users"
+      ]
+    },
+    "uiFeatures": {
+      "description": "User interface and experience features",
+      "features": [
+        "Dark/light theme toggle",
+        "Responsive design for mobile",
+        "Material Design components",
+        "Intuitive navigation",
+        "Loading states and error handling"
+      ],
+      "acceptance_criteria": [
+        "Theme preference is persisted across sessions",
+        "Application is fully functional on mobile devices",
+        "Navigation adapts to screen size",
+        "All user actions provide appropriate feedback",
+        "Error messages are clear and helpful"
+      ]
+    }
+  },
+  "nonFunctionalRequirements": {
+    "performance": {
+      "pageLoadTime": "< 3 seconds",
+      "fileUploadTime": "< 10 seconds for files up to 10MB",
+      "apiResponseTime": "< 2 seconds",
+      "concurrentUsers": "Up to 100 simultaneous users"
+    },
+    "security": {
+      "authentication": "JWT with refresh token rotation",
+      "dataTransmission": "HTTPS only",
+      "fileAccess": "Permission-based with audit logging",
+      "inputValidation": "All inputs validated on client and server",
+      "rateLimiting": "API rate limiting to prevent abuse"
+    },
+    "usability": {
+      "browserSupport": ["Chrome 90+", "Firefox 88+", "Safari 14+", "Edge 90+"],
+      "deviceSupport": ["Desktop", "Tablet", "Mobile"],
+      "accessibility": "WCAG 2.1 AA compliance",
+      "language": "English (with i18n structure for future expansion)"
+    },
+    "reliability": {
+      "uptime": "99.5%",
+      "errorRecovery": "Graceful error handling with user-friendly messages",
+      "dataBackup": "Automated database backups",
+      "failover": "Service redundancy for critical components"
+    }
+  },
+  "userStories": [
+    {
+      "id": "US001",
+      "title": "Admin User Login",
+      "description": "As an admin, I want to login to the system so that I can manage users and resumes",
+      "acceptanceCriteria": [
+        "Admin can login with valid credentials",
+        "Admin is redirected to dashboard after login",
+        "Admin has access to all system features",
+        "Invalid login attempts show appropriate error messages"
+      ],
+      "priority": "High"
+    },
+    {
+      "id": "US002",
+      "title": "Resume Upload",
+      "description": "As a recruiter, I want to upload candidate resumes so that they can be reviewed and managed",
+      "acceptanceCriteria": [
+        "Recruiter can upload PDF files",
+        "Candidate information is captured during upload",
+        "Files are named with candidate name format",
+        "Upload progress is shown to user",
+        "Success/error messages are displayed"
+      ],
+      "priority": "High"
+    },
+    {
+      "id": "US003",
+      "title": "Resume Assignment",
+      "description": "As an admin, I want to assign resumes to specific recruiters so that workload can be distributed",
+      "acceptanceCriteria": [
+        "Admin can select recruiter from dropdown",
+        "Assignment is saved and reflected in system",
+        "Assigned recruiter can access the resume",
+        "Assignment history is tracked"
+      ],
+      "priority": "High"
+    },
+    {
+      "id": "US004",
+      "title": "Resume Viewing",
+      "description": "As a user, I want to view resume files so that I can review candidate information",
+      "acceptanceCriteria": [
+        "Resume opens in new browser tab or downloads",
+        "File access respects user permissions",
+        "Works on both desktop and mobile devices",
+        "Loading indicators are shown during file access"
+      ],
+      "priority": "High"
+    },
+    {
+      "id": "US005",
+      "title": "Share Resume Link",
+      "description": "As a user, I want to generate shareable links for resumes so that I can share them with others",
+      "acceptanceCriteria": [
+        "Share link is generated with expiration time",
+        "WhatsApp sharing includes candidate details",
+        "Links can be accessed without authentication",
+        "Expired links are rejected with appropriate message"
+      ],
+      "priority": "Medium"
+    },
+    {
+      "id": "US006",
+      "title": "Dark Mode Toggle",
+      "description": "As a user, I want to toggle between light and dark themes so that I can use the app comfortably",
+      "acceptanceCriteria": [
+        "Theme toggle button is easily accessible",
+        "Theme changes are applied immediately",
+        "Theme preference is saved across sessions",
+        "All components adapt to selected theme"
+      ],
+      "priority": "Low"
+    }
+  ],
+  "technicalArchitecture": {
+    "frontend": {
+      "framework": "React 18",
+      "stateManagement": "React Query + Context API",
+      "routing": "React Router v6",
+      "styling": "Materialize CSS with custom themes",
+      "buildTool": "Create React App"
+    },
+    "backend": {
+      "runtime": "Node.js 20",
+      "framework": "Express.js",
+      "database": "PostgreSQL with Prisma ORM",
+      "authentication": "JWT with httpOnly cookies",
+      "fileStorage": "Local storage (configurable for S3)",
+      "validation": "Zod schema validation"
+    },
+    "deployment": {
+      "frontend": "Netlify",
+      "backend": "Render.com",
+      "database": "Neon.tech (PostgreSQL)",
+      "monitoring": "Application logs and error tracking"
+    }
+  },
+  "testingStrategy": {
+    "unitTests": "Jest for component and utility testing",
+    "integrationTests": "API endpoint testing with supertest",
+    "e2eTests": "TestSprite for complete user flow testing",
+    "performanceTests": "Load testing for file upload and API endpoints",
+    "securityTests": "Authentication, authorization, and input validation testing"
+  },
+  "deliverables": [
+    {
+      "name": "Authentication System",
+      "description": "Complete login/logout with role-based access",
+      "status": "Completed"
+    },
+    {
+      "name": "Resume Management",
+      "description": "Upload, view, assign, and manage resumes",
+      "status": "Completed"
+    },
+    {
+      "name": "User Management",
+      "description": "Admin functionality for user creation and management",
+      "status": "Completed"
+    },
+    {
+      "name": "File Access System",
+      "description": "Secure file viewing and downloading",
+      "status": "In Progress"
+    },
+    {
+      "name": "Share Link Feature",
+      "description": "Generate and manage shareable resume links",
+      "status": "Completed"
+    },
+    {
+      "name": "Mobile Responsiveness",
+      "description": "Full mobile device compatibility",
+      "status": "In Progress"
+    }
+  ],
+  "riskAssessment": [
+    {
+      "risk": "File upload failures on mobile devices",
+      "impact": "Medium",
+      "probability": "Medium",
+      "mitigation": "Comprehensive mobile testing and fallback mechanisms"
+    },
+    {
+      "risk": "Performance issues with large file uploads",
+      "impact": "Medium",
+      "probability": "Low",
+      "mitigation": "File size limits and progress indicators"
+    },
+    {
+      "risk": "Security vulnerabilities in file access",
+      "impact": "High",
+      "probability": "Low",
+      "mitigation": "Strict permission checks and security audits"
+    }
+  ]
+}

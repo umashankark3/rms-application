@@ -1,0 +1,163 @@
+[
+  {
+    "id": "admin_login_test",
+    "title": "Admin Login and Dashboard Access",
+    "description": "Test admin user authentication and verify access to admin-only features",
+    "steps": [
+      "Navigate to https://msrms.netlify.app",
+      "Click on login if not already on login page",
+      "Enter username 'admin' in the username field",
+      "Enter password 'admin123' in the password field",
+      "Click the login button",
+      "Verify successful login and redirect to resumes dashboard",
+      "Verify admin-only features are visible (Users menu item)",
+      "Verify the user can see all resumes in the system"
+    ]
+  },
+  {
+    "id": "resume_upload_test",
+    "title": "Resume Upload Functionality", 
+    "description": "Test the complete resume upload process including form validation and file handling",
+    "steps": [
+      "Login as admin user",
+      "Navigate to the Upload page by clicking Upload in navigation",
+      "Fill in candidate name field with 'Test Candidate'",
+      "Fill in candidate email field with 'test@example.com'",
+      "Fill in candidate phone field with '+1234567890'",
+      "Fill in skills field with 'JavaScript, React, Node.js'",
+      "Fill in experience/notes field with 'Test experience'",
+      "Select a PDF file for upload",
+      "Click the upload/submit button",
+      "Verify successful upload message appears",
+      "Navigate back to resumes list and verify new resume appears"
+    ]
+  },
+  {
+    "id": "resume_view_test",
+    "title": "Resume Viewing and Download",
+    "description": "Test resume file viewing and download functionality with proper file naming",
+    "steps": [
+      "Login as admin user",
+      "Navigate to resumes list page",
+      "Find a resume in the list",
+      "Click the 'View' button on a resume",
+      "Verify that the resume file opens in a new tab or downloads",
+      "Check that the file name follows the expected format with candidate name"
+    ]
+  },
+  {
+    "id": "dark_mode_test",
+    "title": "Dark Mode Toggle Functionality",
+    "description": "Test theme switching between light and dark modes with persistence",
+    "steps": [
+      "Navigate to the application",
+      "Look for the dark mode toggle button in the top navigation",
+      "Click the dark mode toggle button",
+      "Verify that the theme changes to dark mode",
+      "Refresh the page",
+      "Verify that the dark mode preference is persisted",
+      "Click the toggle again to switch back to light mode",
+      "Verify the theme changes back to light mode"
+    ]
+  },
+  {
+    "id": "mobile_responsive_test",
+    "title": "Mobile Responsiveness Test",
+    "description": "Test application functionality and layout on mobile devices and small screens",
+    "steps": [
+      "Open the application in a mobile viewport or resize browser to mobile size",
+      "Verify that the navigation menu adapts to mobile (hamburger menu)",
+      "Test login functionality on mobile",
+      "Navigate through different pages and verify layout adapts",
+      "Test resume upload on mobile device",
+      "Verify all buttons and forms are accessible on touch devices"
+    ]
+  },
+  {
+    "id": "user_management_test",
+    "title": "Admin User Management",
+    "description": "Test admin-only user creation and management functionality",
+    "steps": [
+      "Login as admin user",
+      "Navigate to Users page (admin only feature)",
+      "Verify existing users are listed",
+      "Click 'Add User' or similar button to create new user",
+      "Fill in new user form with test data",
+      "Select user role (admin or recruiter)",
+      "Submit the form",
+      "Verify new user appears in the users list",
+      "Verify success message is displayed"
+    ]
+  },
+  {
+    "id": "recruiter_access_test",
+    "title": "Recruiter Role Access Control",
+    "description": "Test role-based access control and verify recruiter permissions",
+    "steps": [
+      "Login with recruiter credentials if available",
+      "Verify that Users menu/page is not accessible to recruiter",
+      "Verify recruiter can access assigned resumes",
+      "Verify recruiter can upload new resumes",
+      "Try to access admin-only features and verify access is denied",
+      "Verify appropriate error messages for unauthorized access"
+    ]
+  },
+  {
+    "id": "resume_assignment_test",
+    "title": "Resume Assignment Functionality",
+    "description": "Test resume assignment to recruiters and verify assignment persistence",
+    "steps": [
+      "Login as admin user",
+      "Navigate to a resume detail page",
+      "Look for assignment functionality",
+      "Select a recruiter from dropdown/list",
+      "Assign the resume to the selected recruiter",
+      "Verify assignment is saved successfully",
+      "Verify assignment is reflected in resume list"
+    ]
+  },
+  {
+    "id": "share_link_test",
+    "title": "Resume Share Link Generation",
+    "description": "Test secure share link generation and WhatsApp integration",
+    "steps": [
+      "Login as any authorized user",
+      "Navigate to a resume detail page",
+      "Look for share/WhatsApp button",
+      "Click to generate share link",
+      "Verify share link is generated",
+      "Test WhatsApp integration if available",
+      "Open share link in incognito/new browser",
+      "Verify resume is accessible via share link without login"
+    ]
+  },
+  {
+    "id": "error_handling_test",
+    "title": "Error Handling and Validation",
+    "description": "Test application error handling, validation, and edge cases",
+    "steps": [
+      "Try to login with invalid credentials",
+      "Verify appropriate error message is shown",
+      "Try to upload non-PDF file",
+      "Verify file type validation works",
+      "Try to submit forms with missing required fields",
+      "Verify validation messages appear",
+      "Test network error scenarios by going offline",
+      "Verify graceful error handling for network issues"
+    ]
+  },
+  {
+    "id": "logout_test",
+    "title": "User Logout Functionality",
+    "description": "Test user logout process and session clearing",
+    "steps": [
+      "Login as any user",
+      "Navigate to different pages to establish session",
+      "Click logout button/link",
+      "Verify redirect to login page",
+      "Try to access protected routes directly",
+      "Verify user is redirected to login page",
+      "Verify session data is cleared"
+    ]
+  }
+]
